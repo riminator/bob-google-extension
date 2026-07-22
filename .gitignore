@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Bob internal files
+.bob/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store

@@ -1,0 +1,26 @@
+# render.yaml — drop this file in the repo root of your proxy folder
+# Then go to https://dashboard.render.com → New → Web Service → connect your repo
+services:
+  - type: web
+    name: bob-llm-proxy
+    runtime: node
+    region: oregon
+    plan: free          # free tier is fine — it's just a tiny proxy
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PROXY_SECRET
+        generateValue: true   # Render auto-generates a random secret for you
+      - key: BOB_INSTANCE_ID
+        value: YOUR_BOB_INSTANCE_ID   # find this in your Bob workspace settings
+      - key: BOB_TEAM_ID
+        value: YOUR_BOB_TEAM_ID       # find this in your Bob workspace settings
+      # Optional overrides — leave commented unless you need them:
+      # - key: BOB_API_URL
+      #   value: https://api.us-east.bob.ibm.com/inference/v1/chat/completions
+      # - key: BOB_MODEL
+      #   value: premium-shell
+      # - key: BOB_KEY_TYPE
+      #   value: inference
