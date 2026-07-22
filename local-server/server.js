@@ -17,8 +17,8 @@ const PORT = 3333;
 const BOB_API_URL     = process.env.BOB_API_URL     || 'https://api.us-east.bob.ibm.com/inference/v1/chat/completions';
 const BOB_API_KEY     = process.env.BOB_API_KEY     || '';
 const BOB_MODEL       = process.env.BOB_MODEL       || 'premium-shell';
-const BOB_INSTANCE_ID = process.env.BOB_INSTANCE_ID || '37f54b01-2dec-4737-bf93-c094a5f95e7c';
-const BOB_TEAM_ID     = process.env.BOB_TEAM_ID     || '019ddffb-8c71-79f6-bd0a-feb1a597b638';
+const BOB_INSTANCE_ID = process.env.BOB_INSTANCE_ID || '';
+const BOB_TEAM_ID     = process.env.BOB_TEAM_ID     || '';
 const BOB_KEY_TYPE    = process.env.BOB_KEY_TYPE    || 'inference'; // 'inference' or 'general'
 
 // ── Middleware ──

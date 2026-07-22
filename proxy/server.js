@@ -21,8 +21,8 @@ const PORT = process.env.PORT || 3333;
 // ── Required env vars ──
 const BOB_API_URL     = process.env.BOB_API_URL     || 'https://api.us-east.bob.ibm.com/inference/v1/chat/completions';
 const BOB_MODEL       = process.env.BOB_MODEL       || 'premium-shell';
-const BOB_INSTANCE_ID = process.env.BOB_INSTANCE_ID || '37f54b01-2dec-4737-bf93-c094a5f95e7c';
-const BOB_TEAM_ID     = process.env.BOB_TEAM_ID     || '019ddffb-8c71-79f6-bd0a-feb1a597b638';
+const BOB_INSTANCE_ID = process.env.BOB_INSTANCE_ID || '';
+const BOB_TEAM_ID     = process.env.BOB_TEAM_ID     || '';
 const BOB_KEY_TYPE    = process.env.BOB_KEY_TYPE    || 'inference'; // 'inference' → "Apikey", 'general' → "Bearer"
 // PROXY_SECRET: set this in your hosting dashboard. The extension sends it in X-Proxy-Secret.
 // Leave empty to disable the check (not recommended for a public deployment).
