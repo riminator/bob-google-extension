@@ -826,6 +826,36 @@ async function fetchPageLinks() {
 // Nav-intent keywords — if present, we inject page links into the prompt
 const NAV_INTENT = /\b(navigate|go to|open|click|find|take me|show me|visit|tab|page|section|link|getting started|using|how to use)\b/i;
 
+// Keywords that suggest the user wants to search/find something online
+const SEARCH_INTENT = /\b(find|search|look up|look for|get|fetch|show me|open|go to|navigate|documentation|docs|tutorial|guide|how to|how do|what is|explain|help with|learn about|article|page|site|website)\b/i;
+
+// Extract a clean search query from the user's raw message.
+// Strips imperative openers like "find me", "search for", "can you look up" etc.
+function extractSearchQuery(msg) {
+  return msg
+    .replace(/^(hey bob[,\s]*|bob[,\s]*)/i, '')
+    .replace(/^(can you|could you|please|would you)[,\s]*/i, '')
+    .replace(/^(find( me)?|search( for)?|look( up| for)?|get( me)?|show me|open|navigate to|go to|fetch)[,\s]*/i, '')
+    .replace(/^(the |a |an )/i, '')
+    .trim() || msg.trim();
+}
+
+// Called when the LLM is unreachable. Tries to do something useful based purely
+// on keywords — no AI involved. If the message looks like a search/navigation
+// request, fires a Google search directly. Otherwise shows the original error.
+async function fallbackSearch(userText, originalError) {
+  if (!SEARCH_INTENT.test(userText)) {
+    appendError(originalError);
+    return;
+  }
+  const query = extractSearchQuery(userText);
+  appendMessage('assistant',
+    `⚠️ *AI unavailable* (${originalError.split('\n')[0]})\n\nNo proxy configured — falling back to a Google search for: **${query}**`,
+    []
+  );
+  await runBrowserActions([{ type: 'navigate_search', query }]);
+}
+
 async function sendMessage() {
   const text = userInput.value.trim();
   if (!text) return;
@@ -872,7 +902,8 @@ async function sendMessage() {
     if (!response) {
       appendError('No response from background worker. Try reloading the extension.');
     } else if (response.error) {
-      appendError(response.error);
+      // Proxy not configured or auth failure — try a dumb search fallback
+      await fallbackSearch(text, response.error);
     } else {
       // Sanitize answer — strip any raw JSON objects the LLM accidentally put in the answer field
       const rawAnswer = response.answer || '(no answer)';
@@ -891,7 +922,7 @@ async function sendMessage() {
     }
   } catch (err) {
     typingEl.remove();
-    appendError(err.message);
+    await fallbackSearch(text, err.message);
   } finally {
     sendBtn.disabled = false;
     userInput.focus();
